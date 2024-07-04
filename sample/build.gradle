@@ -1,11 +1,12 @@
 apply plugin: 'com.android.application'
-apply plugin: 'checkstyle'
+//apply plugin: 'checkstyle'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 
 android {
 
-    compileSdkVersion versions.androidCompileSdk
+    namespace "com.folioreader.android.sample"
+    compileSdk versions.androidCompileSdk
 
     defaultConfig {
         applicationId "com.folioreader.android.sample"
@@ -24,9 +25,9 @@ android {
         }
     }
 
-    dexOptions {
-        javaMaxHeapSize "4G"
-    }
+//    dexOptions {
+//        javaMaxHeapSize "4G"
+//    }
 
     packagingOptions {
         exclude 'META-INF/ASL2.0'

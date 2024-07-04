@@ -37,12 +37,11 @@ import com.folioreader.util.AppUtil
 import com.folioreader.util.HighlightUtil
 import com.folioreader.util.UiUtil
 import dalvik.system.PathClassLoader
-import kotlinx.android.synthetic.main.text_selection.view.*
 import org.json.JSONObject
 import org.springframework.util.ReflectionUtils
 import java.lang.ref.WeakReference
 import kotlin.math.floor
-
+import com.folioreader.databinding.TextSelectionBinding
 /**
  * @author by mahavir on 3/31/16.
  */
@@ -107,9 +106,8 @@ class FolioWebView : WebView {
     private var destroyed: Boolean = false
     private var handleHeight: Int = 0
     private var calculatedProgress = 0.0
-
     private var lastScrollType: LastScrollType? = null
-
+    private lateinit var textSelectionBinding:TextSelectionBinding
     val contentHeightVal: Int
         get() = floor((this.contentHeight * this.scale).toDouble()).toInt()
 
@@ -162,7 +160,7 @@ class FolioWebView : WebView {
     private inner class HorizontalGestureListener : GestureDetector.SimpleOnGestureListener() {
 
         override fun onScroll(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             distanceX: Float,
             distanceY: Float
@@ -173,7 +171,7 @@ class FolioWebView : WebView {
         }
 
         override fun onFling(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             velocityX: Float,
             velocityY: Float
@@ -230,7 +228,7 @@ class FolioWebView : WebView {
     private inner class VerticalGestureListener : GestureDetector.SimpleOnGestureListener() {
 
         override fun onScroll(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             distanceX: Float,
             distanceY: Float
@@ -246,7 +244,7 @@ class FolioWebView : WebView {
         }
 
         override fun onFling(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             velocityX: Float,
             velocityY: Float
@@ -297,46 +295,47 @@ class FolioWebView : WebView {
             ContextThemeWrapper(context, R.style.FolioDayTheme)
         }
         Log.i(LOG_TAG, config.toString())
-        viewTextSelection = LayoutInflater.from(ctw).inflate(R.layout.text_selection, null)
+//        viewTextSelection = LayoutInflater.from(ctw).inflate(R.layout.text_selection, null)
+        textSelectionBinding = TextSelectionBinding.inflate(LayoutInflater.from(ctw))
         viewTextSelection.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
 
-        viewTextSelection.yellowHighlight.setOnClickListener {
+        textSelectionBinding.yellowHighlight.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> yellowHighlight")
             onHighlightColorItemsClicked(HighlightStyle.Yellow, false)
         }
-        viewTextSelection.greenHighlight.setOnClickListener {
+        textSelectionBinding.greenHighlight.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> greenHighlight")
             onHighlightColorItemsClicked(HighlightStyle.Green, false)
         }
-        viewTextSelection.blueHighlight.setOnClickListener {
+        textSelectionBinding.blueHighlight.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> blueHighlight")
             onHighlightColorItemsClicked(HighlightStyle.Blue, false)
         }
-        viewTextSelection.pinkHighlight.setOnClickListener {
+        textSelectionBinding.pinkHighlight.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> pinkHighlight")
             onHighlightColorItemsClicked(HighlightStyle.Pink, false)
         }
-        viewTextSelection.underlineHighlight.setOnClickListener {
+        textSelectionBinding.underlineHighlight.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> underlineHighlight")
             onHighlightColorItemsClicked(HighlightStyle.Underline, false)
         }
 
-        viewTextSelection.deleteHighlight.setOnClickListener {
+        textSelectionBinding.deleteHighlight.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> deleteHighlight")
             dismissPopupWindow()
             loadUrl("javascript:clearSelection()")
             loadUrl("javascript:deleteThisHighlight()")
         }
 
-        viewTextSelection.copySelection.setOnClickListener {
+        textSelectionBinding.copySelection.setOnClickListener {
             dismissPopupWindow()
             loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
         }
-        viewTextSelection.shareSelection.setOnClickListener {
+        textSelectionBinding.shareSelection.setOnClickListener {
             dismissPopupWindow()
             loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
         }
-        viewTextSelection.defineSelection.setOnClickListener {
+        textSelectionBinding.defineSelection.setOnClickListener {
             dismissPopupWindow()
             loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
         }
@@ -429,7 +428,9 @@ class FolioWebView : WebView {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        //Log.v(LOG_TAG, "-> onTouchEvent -> " + AppUtil.actionToString(event.getAction()));
+        if (event != null) {
+            Log.v(LOG_TAG, "-> onTouchEvent -> " + AppUtil.actionToString(event.getAction()))
+        };
 
         if (event == null)
             return false

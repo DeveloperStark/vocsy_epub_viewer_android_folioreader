@@ -338,21 +338,14 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             setDayMode()
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val color: Int = if (config.isNightMode) {
-                ContextCompat.getColor(this, R.color.black)
-            } else {
-                val attrs = intArrayOf(android.R.attr.navigationBarColor)
-                val typedArray = theme.obtainStyledAttributes(attrs)
-                typedArray.getColor(0, ContextCompat.getColor(this, R.color.white))
-            }
-            window.navigationBarColor = color
+        val color: Int = if (config.isNightMode) {
+            ContextCompat.getColor(this, R.color.black)
+        } else {
+            val attrs = intArrayOf(android.R.attr.navigationBarColor)
+            val typedArray = theme.obtainStyledAttributes(attrs)
+            typedArray.getColor(0, ContextCompat.getColor(this, R.color.white))
         }
-
-        if (Build.VERSION.SDK_INT < 16) {
-            // Fix for appBarLayout.fitSystemWindows() not being called on API < 16
-            appBarLayout!!.setTopMargin(statusBarHeight)
-        }
+        window.navigationBarColor = color
     }
 
     override fun setDayMode() {
@@ -423,20 +416,6 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             menuInflater.inflate(R.menu.menu_main, menu)
 
             val config = AppUtil.getSavedConfig(applicationContext)!!
-
-//            toolbar?.getOverflowIcon()?.setColorFilter(config.currentThemeColor, PorterDuff.Mode.SRC_ATOP);
-//            for (i in 0 until menu.size()) {
-//                val drawable: Drawable = menu.getItem(i).getIcon()
-//                if (drawable != null) {
-//                    drawable.mutate()
-//                    drawable.setColorFilter(
-//                        config.currentThemeColor,
-//                        PorterDuff.Mode.SRC_ATOP
-//                    )
-//                }
-//            }
-
-
             UiUtil.setColorIntToDrawable(
                 config.currentThemeColor, menu.findItem(R.id.itemBookmark).icon
             )
