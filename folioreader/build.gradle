@@ -1,6 +1,4 @@
 apply plugin: 'com.android.library'
-//apply from: '../config/quality/quality.gradle'
-//apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 
@@ -133,3 +131,25 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
 }
 //apply from: '../folioreader/bintray/bintrayv1.gradle'
+
+
+
+// 设置输出目录
+task copyAAR(type: Copy) {
+    delete("../folioreader-1.0.0.aar") // 删除已存在的文件
+    from('build/outputs/aar/')
+    into('../') // 输出到根目录
+    include('folioreader-release.aar')
+    rename('folioreader-release.aar', 'folioreader-1.0.0.aar')
+}
+
+//解决依赖问题
+project.afterEvaluate {
+    assembleRelease.finalizedBy(copyAAR)
+    tasks.named('bundleReleaseLocalLintAar').get().dependsOn(copyAAR)
+    tasks.named('bundleLibRuntimeToJarRelease').get().dependsOn(copyAAR)
+    tasks.named('bundleLibCompileToJarRelease').get().dependsOn(copyAAR)
+    tasks.named('compileReleaseLibraryResources').get().dependsOn(copyAAR)
+    tasks.named('extractDeepLinksRelease').get().dependsOn(copyAAR)
+    tasks.named('copyReleaseJniLibsProjectOnly').get().dependsOn(copyAAR)
+}

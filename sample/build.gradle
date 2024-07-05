@@ -71,5 +71,17 @@ dependencies {
             details.useVersion("3.3.2-5309881")
         }
     }
+}
 
+//解决依赖问题
+afterEvaluate {
+    tasks.named('checkReleaseAarMetadata').get().dependsOn(':folioreader:copyAAR')
+    tasks.named('mapReleaseSourceSetPaths').get().dependsOn(':folioreader:copyAAR')
+    tasks.named('mergeReleaseResources').get().dependsOn(':folioreader:copyAAR')
+    tasks.named('extractDeepLinksRelease').get().dependsOn(':folioreader:copyAAR')
+    tasks.named('mergeReleaseJniLibFolders').get().dependsOn(':folioreader:copyAAR')
+    tasks.named('mergeExtDexRelease').get().dependsOn(':folioreader:copyAAR')
+    tasks.named('mergeReleaseArtProfile').get().dependsOn(':folioreader:copyAAR')
+    tasks.named('mergeReleaseShaders').get().dependsOn(':folioreader:copyAAR')
+    tasks.named('sdkReleaseDependencyData').get().dependsOn(':folioreader:copyAAR')
 }
